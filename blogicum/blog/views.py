@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.http import Http404
 
 posts = [
     {
@@ -45,20 +46,14 @@ posts = [
 
 
 def index(request):
-    """Выводит главную страницу сайта."""
-    context = {'posts': posts}
-    return render(request, 'blog/index.html', context)
+    return render(request, 'blog/index.html', {'posts': posts})
 
 
 def post_detail(request, post_id):
-    """Выводит отдельный пост."""
-    context = {'post': posts[post_id]}
-    return render(request, 'blog/detail.html', context)
+    if post_id not in posts:
+        raise Http404(f"Пост {post_id} не найден.")
+    return render(request, 'blog/detail.html', {'post': posts[post_id]})
 
 
 def category_posts(request, category_slug):
-    filtered_posts = [
-        post for post in posts if post['category'] == category_slug
-    ]
-    context = {'posts': filtered_posts, 'category': category_slug}
-    return render(request, 'blog/category.html', context)
+    return render(request, 'blog/category.html', {'category': category_slug})
