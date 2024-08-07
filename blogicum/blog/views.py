@@ -50,9 +50,11 @@ def index(request):
 
 
 def post_detail(request, post_id):
-    if post_id not in posts:
-        raise Http404(f"Пост {post_id} не найден.")
-    return render(request, 'blog/detail.html', {'post': posts[post_id]})
+    try:
+        post = posts[post_id]
+        return render(request, 'blog/detail.html', {'post': post})
+    except IndexError:
+        raise Http404("Пост с указанным ID не найден.")
 
 
 def category_posts(request, category_slug):
